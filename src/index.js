@@ -16,11 +16,17 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault(process.env.APP_TZ || 'Asia/Bangkok');
 
 const app = express();
-app.use(bodyParser.json());
+
 
 app.get('/', (req, res) => res.send('Shiba Shift Bot is running 🐕‍🦺'));
 app.get('/healthz', (req, res) => res.json({status:'ok', name:'shiba-shift-bot', tz: process.env.APP_TZ || 'Asia/Bangkok'}));
-app.post('/webhook', lineMiddleware, handleLineWebhook);
+app.post(
+  '/webhook',
+  express.json({ verify: (req, res, buf) => { req.rawBody = buf; } }),
+  lineMiddleware,
+  handleLineWebhook
+);
+app.use(bodyParser.json());
 
 // .ics export (month)
 app.get('/ics/:userId/:year/:month', async (req, res) => {
