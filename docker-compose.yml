@@ -1,0 +1,27 @@
+
+version: "3.9"
+services:
+  app:
+    build: .
+    container_name: shiba-shift-app
+    restart: always
+    env_file: .env
+    environment:
+      - TZ=${APP_TZ:-Asia/Bangkok}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:6
+    container_name: shiba-shift-mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=shiba_shift
+      - TZ=${APP_TZ:-Asia/Bangkok}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+volumes:
+  mongo_data:

@@ -1,0 +1,35 @@
+
+services:
+  - type: web
+    name: shiba-shift-bot
+    env: docker
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /healthz
+    envVars:
+      - key: LINE_CHANNEL_SECRET
+        sync: false
+      - key: LINE_CHANNEL_ACCESS_TOKEN
+        sync: false
+      - key: MONGODB_URI
+        value: mongodb://mongo:27017/shiba_shift
+      - key: APP_TZ
+        value: Asia/Bangkok
+      - key: BASE_URL
+        value: https://shibabot.slipwake.online
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: deepseek/deepseek-chat
+    dockerCommand: node src/index.js
+
+  - type: pserv
+    name: shiba-shift-mongo
+    env: docker
+    plan: starter
+    autoDeploy: false
+    dockerImage: mongo:6
+    disk:
+      name: mongo-data
+      mountPath: /data/db
+      sizeGB: 5
